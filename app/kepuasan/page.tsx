@@ -375,7 +375,7 @@ export default function KepuasanPenggunaLulusanPage() {
               <RatingButtons field="kompetensi_sesuai_kebutuhan" label="1. Lulusan memiliki kompetensi sesuai kebutuhan instansi/perusahaan" />
               <RatingButtons field="kemampuan_bekerja_profesional" label="2. Lulusan mampu bekerja secara profesional" />
               <RatingButtons field="kemampuan_adaptasi_budaya_kerja" label="3. Lulusan mudah beradaptasi dengan budaya kerja" />
-              <RatingButtons field="instansi_puas_kinerja" label="4. Secara umum instansi puas terhadap kinerja lulusan" />
+              <RatingButtons field="instansi_puas_kinerja" label="4. Secara umum instansi/perusahaan puas terhadap kinerja lulusan" />
             </div>
           </div>
 
