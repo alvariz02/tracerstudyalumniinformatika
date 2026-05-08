@@ -17,9 +17,6 @@ create table if not exists public.tracer_study (
   -- Status
   status_saat_ini                 text not null,
 
-  -- Jenis Kelamin (Laki-Laki / Perempuan)
-  jenis_kelamin                   text not null check (jenis_kelamin in ('Laki-Laki', 'Perempuan')),
-
   -- Sumber Dana (array of enum strings)
   sumber_dana                     text[] not null default '{}',
 

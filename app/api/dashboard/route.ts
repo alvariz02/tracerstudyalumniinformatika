@@ -246,17 +246,6 @@ function calculateAnalytics(tracerData: any[], angketData: any[]) {
     .map(([year, count]) => ({ year: String(year), count }))
     .sort((a, b) => a.year.localeCompare(b.year))
 
-  // Gender distribution for tracer (older rows might not have this column/value)
-  const tracerGenderCounts: Record<'Laki-Laki' | 'Perempuan', number> = {
-    'Laki-Laki': 0,
-    'Perempuan': 0,
-  }
-  for (const row of tracerData) {
-    const gender = row?.jenis_kelamin
-    if (gender === 'Laki-Laki') tracerGenderCounts['Laki-Laki']++
-    else if (gender === 'Perempuan') tracerGenderCounts['Perempuan']++
-  }
-
   // Angket Analytics
   const angketTotal = angketData.length
 
@@ -310,10 +299,7 @@ function calculateAnalytics(tracerData: any[], angketData: any[]) {
       total: tracerTotal,
       statusDistribution,
       yearDistribution,
-      genderDistribution: [
-        { name: 'Laki-Laki', value: tracerGenderCounts['Laki-Laki'] },
-        { name: 'Perempuan', value: tracerGenderCounts['Perempuan'] },
-      ],
+      genderDistribution: [],
     },
     angket: {
       total: angketTotal,

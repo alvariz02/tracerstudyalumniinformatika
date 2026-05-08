@@ -6,18 +6,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
 
     // Basic server-side validation
-    const required = [
+    const requiredFields = [
       'nim_npm',
       'nama',
       'tahun_lulus',
       'no_telpon',
       'email',
       'status_saat_ini',
-      'jenis_kelamin',
       'waktu_mulai_mencari',
       'aktif_mencari_kerja',
     ]
-    for (const field of required) {
+    for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json({ error: `Field ${field} wajib diisi` }, { status: 400 })
       }
@@ -31,7 +30,6 @@ export async function POST(req: NextRequest) {
       .insert([
         {
           ...body,
-          jenis_kelamin: body.jenis_kelamin,
         }
       ])
       .select('id')
