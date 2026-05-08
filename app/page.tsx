@@ -16,20 +16,19 @@ export default function Home() {
           Silakan pilih formulir yang ingin Anda isi
         </p>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <Link
             href="/tracer"
-            className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-colors text-sm"
+            className="block w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors text-center"
           >
-            Isi Tracer Study Alumni
+            Isi Tracer Study
           </Link>
-
-          {/* <Link
-            href="/angket"
-            className="block w-full bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-3 rounded-xl transition-colors text-sm"
+          <Link
+            href="/kepuasan"
+            className="block w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors text-center"
           >
-            Isi Angket Kepuasan alumni
-          </Link> */}
+            Isi Kepuasan Pengguna Lulusan
+          </Link>
         </div>
       </div>
     </div>

@@ -150,3 +150,70 @@ create policy "Allow public read angket"
 create policy "Allow service role delete angket"
   on public.angket_kepuasan for delete
   using (true);
+
+-- ===========================================================
+-- Kepuasan Pengguna Lulusan Table
+-- ===========================================================
+
+create table if not exists public.kepuasan_pengguna_lulusan (
+  id                              uuid primary key default gen_random_uuid(),
+  created_at                      timestamptz default now(),
+
+  -- Data Responden
+  nama_instansi_perusahaan           text not null,
+  nama_penilai                    text not null,
+  jabatan                         text not null,
+  alamat_instansi                  text not null,
+  nomor_telepon_email              text not null,
+  nama_lulusan_yang_dinilai       text not null,
+  tahun_lulus                     smallint not null,
+  jabatan_lulusan_saat_ini         text not null,
+  lama_bekerja                    text not null,
+
+  -- Penilaian Kepuasan (1-4)
+  integritas                      smallint check (integritas between 1 and 4),
+  keahlian_bidang_ilmu            smallint check (keahlian_bidang_ilmu between 1 and 4),
+  kemampuan_teknologi_informasi  smallint check (kemampuan_teknologi_informasi between 1 and 4),
+  kemampuan_berkomunikasi         smallint check (kemampuan_berkomunikasi between 1 and 4),
+  kemampuan_kerja_sama_tim        smallint check (kemampuan_kerja_sama_tim between 1 and 4),
+  kemampuan_berpikir_kritis       smallint check (kemampuan_berpikir_kritis between 1 and 4),
+  kreativitas_inovasi             smallint check (kreativitas_inovasi between 1 and 4),
+  kemampuan_adaptasi_lingkungan   smallint check (kemampuan_adaptasi_lingkungan between 1 and 4),
+  tanggung_jawab_pekerjaan       smallint check (tanggung_jawab_pekerjaan between 1 and 4),
+  kepemimpinan                    smallint check (kepemimpinan between 1 and 4),
+  kemampuan_manajemen_waktu       smallint check (kemampuan_manajemen_waktu between 1 and 4),
+  kemampuan_bahasa_inggris        smallint check (kemampuan_bahasa_inggris between 1 and 4),
+  motivasi_etos_kerja             smallint check (motivasi_etos_kerja between 1 and 4),
+  kemampuan_analisis_keputusan    smallint check (kemampuan_analisis_keputusan between 1 and 4),
+  kinerja_keseluruhan             smallint check (kinerja_keseluruhan between 1 and 4),
+
+  -- Kepuasan Umum (1-4)
+  kompetensi_sesuai_kebutuhan     smallint check (kompetensi_sesuai_kebutuhan between 1 and 4),
+  kemampuan_bekerja_profesional    smallint check (kemampuan_bekerja_profesional between 1 and 4),
+  kemampuan_adaptasi_budaya_kerja smallint check (kemampuan_adaptasi_budaya_kerja between 1 and 4),
+  instansi_puas_kinerja            smallint check (instansi_puas_kinerja between 1 and 4),
+
+  -- Masukan dan Saran
+  kompetensi_dibutuhkan_dilingkungan text,
+  kompetensi_perlu_ditingkatkan      text,
+  saran_pengembangan_kurikulum     text,
+  harapan_pengguna_lulusan         text
+);
+
+-- Enable Row Level Security
+alter table public.kepuasan_pengguna_lulusan enable row level security;
+
+-- Allow anyone to insert (public survey)
+create policy "Allow public insert kepuasan"
+  on public.kepuasan_pengguna_lulusan for insert
+  with check (true);
+
+-- Allow all users to read all data (for dashboard)
+create policy "Allow public read kepuasan"
+  on public.kepuasan_pengguna_lulusan for select
+  using (true);
+
+-- Allow service role to delete (for admin dashboard)
+create policy "Allow service role delete kepuasan"
+  on public.kepuasan_pengguna_lulusan for delete
+  using (true);

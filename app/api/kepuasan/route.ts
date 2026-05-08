@@ -7,14 +7,15 @@ export async function POST(req: NextRequest) {
 
     // Basic server-side validation
     const requiredFields = [
-      'nim_npm',
-      'nama',
+      'nama_instansi_perusahaan',
+      'nama_penilai',
+      'jabatan',
+      'alamat_instansi',
+      'nomor_telepon_email',
+      'nama_lulusan_yang_dinilai',
       'tahun_lulus',
-      'no_telpon',
-      'email',
-      'status_saat_ini',
-      'waktu_mulai_mencari',
-      'aktif_mencari_kerja',
+      'jabatan_lulusan_saat_ini',
+      'lama_bekerja',
     ]
     for (const field of requiredFields) {
       if (!body[field]) {
@@ -22,16 +23,11 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    console.log('Tracer POST - Inserting:', body.nama, body.nim_npm)
+    console.log('Kepuasan POST - Inserting:', body.nama_lulusan_yang_dinilai)
 
-    // Ensure mapping matches DB schema
     const { data, error } = await supabase
-      .from('tracer_study')
-      .insert([
-        {
-          ...body,
-        }
-      ])
+      .from('kepuasan_pengguna_lulusan')
+      .insert([body])
       .select('id')
       .single()
 
@@ -40,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Gagal menyimpan data' }, { status: 500 })
     }
 
-    console.log('Tracer POST - Success, ID:', data?.id)
+    console.log('Kepuasan POST - Success, ID:', data?.id)
 
     return NextResponse.json({ success: true, id: data.id }, { status: 201 })
   } catch (err) {
@@ -51,7 +47,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   const { data, error } = await supabase
-    .from('tracer_study')
+    .from('kepuasan_pengguna_lulusan')
     .select('*')
 
   if (error) {
@@ -66,21 +62,21 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
 
-    console.log('Tracer DELETE - ID:', id)
+    console.log('Kepuasan DELETE - ID:', id)
 
     if (!id) {
       return NextResponse.json({ error: 'ID wajib diisi' }, { status: 400 })
     }
 
     const { data, error } = await supabase
-      .from('tracer_study')
+      .from('kepuasan_pengguna_lulusan')
       .delete()
       .eq('id', id)
       .select()
 
-    console.log('Tracer DELETE - ID:', id)
-    console.log('Tracer DELETE - Result:', { data, error })
-    console.log('Tracer DELETE - Data length:', data?.length)
+    console.log('Kepuasan DELETE - ID:', id)
+    console.log('Kepuasan DELETE - Result:', { data, error })
+    console.log('Kepuasan DELETE - Data length:', data?.length)
 
     if (error) {
       console.error('Supabase delete error:', error)
