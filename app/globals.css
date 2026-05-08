@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { @apply bg-slate-50 text-slate-800 antialiased; }
+}
+
+@layer components {
+  .rating-btn {
+    @apply w-9 h-9 border border-slate-200 bg-white text-slate-500 text-sm font-medium
+           transition-all duration-100 flex items-center justify-center cursor-pointer
+           hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300;
+  }
+  .rating-btn.active {
+    @apply bg-blue-600 text-white border-blue-600;
+  }
+  .rating-btn:first-child { @apply rounded-l-md; }
+  .rating-btn:last-child { @apply rounded-r-md; }
+}
