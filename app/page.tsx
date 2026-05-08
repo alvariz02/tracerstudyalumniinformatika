@@ -24,12 +24,12 @@ export default function Home() {
             Isi Tracer Study Alumni
           </Link>
 
-          <Link
+          {/* <Link
             href="/angket"
             className="block w-full bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-3 rounded-xl transition-colors text-sm"
           >
-            Isi Angket Kepuasan Mahasiswa
-          </Link>
+            Isi Angket Kepuasan alumni
+          </Link> */}
         </div>
       </div>
     </div>
