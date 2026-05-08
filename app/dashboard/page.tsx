@@ -120,14 +120,27 @@ export default function Dashboard() {
 
     try {
       const res = await fetch(`/api/${type}?id=${id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Gagal menghapus')
+      const result = await res.json()
 
+      if (!res.ok) {
+        console.error('Delete error:', result)
+        throw new Error(result.error || 'Gagal menghapus')
+      }
+
+      // Update state dan refresh halaman untuk memastikan data terhapus
       if (type === 'tracer') {
         setTracerData(prev => prev.filter(row => row.id !== id))
       } else {
         setAngketData(prev => prev.filter(row => row.id !== id))
       }
+      
+      // Force reload untuk memastikan data sync dengan database
+      window.location.reload()
+
+      console.log('Delete success:', result)
+
     } catch (err) {
+      console.error('Delete failed:', err)
       alert('Gagal menghapus data')
     }
   }

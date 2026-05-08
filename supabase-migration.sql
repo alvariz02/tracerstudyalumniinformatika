@@ -17,8 +17,12 @@ create table if not exists public.tracer_study (
   -- Status
   status_saat_ini                 text not null,
 
+  -- Jenis Kelamin (Laki-Laki / Perempuan)
+  jenis_kelamin                   text not null check (jenis_kelamin in ('Laki-Laki', 'Perempuan')),
+
   -- Sumber Dana (array of enum strings)
   sumber_dana                     text[] not null default '{}',
+
 
   -- Kompetensi saat lulus (1–5)
   komp_lulus_etika                smallint not null check (komp_lulus_etika between 1 and 5),
@@ -71,6 +75,11 @@ create policy "Allow public insert"
 create policy "Allow authenticated read"
   on public.tracer_study for select
   using (auth.role() = 'authenticated');
+
+-- Allow service role to delete (for admin dashboard)
+create policy "Allow service role delete"
+  on public.tracer_study for delete
+  using (true);
 
 -- ============================================================
 -- Angket Kepuasan Mahasiswa Schema
@@ -139,3 +148,8 @@ create policy "Allow public insert angket"
 create policy "Allow authenticated read angket"
   on public.angket_kepuasan for select
   using (auth.role() = 'authenticated');
+
+-- Allow service role to delete (for admin dashboard)
+create policy "Allow service role delete angket"
+  on public.angket_kepuasan for delete
+  using (true);

@@ -354,7 +354,7 @@ export default function TracerForm() {
                   value={form.tahun_lulus}
                   onChange={(e) => set('tahun_lulus', e.target.value)}>
                   <option value="">Pilih tahun...</option>
-                  {[2018,2019,2020,2021,2022,2023,2024].map((y) => (
+                  {[2018,2019,2020,2021,2022,2023,2024,2025].map((y) => (
                     <option key={y} value={y}>{y}</option>
                   ))}
                 </select>

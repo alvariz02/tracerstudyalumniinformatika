@@ -18,7 +18,16 @@ export async function GET() {
   try {
     // Helpful logs (do NOT print secrets)
     const supabaseKeyIsServiceRole = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY) // best-effort
+    const anonKeyIsSet = Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
     console.log('Dashboard API - Using service role key (best-effort):', supabaseKeyIsServiceRole)
+    console.log('Dashboard API - Anon key is set:', anonKeyIsSet)
+
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.warn(
+        'Dashboard API: SUPABASE_SERVICE_ROLE_KEY is missing. Admin deletes may not work. Fix env config.'
+      )
+    }
+
 
     // Fetch tracer study data (deterministic ordering)
     const { data: tracerData, error: tracerError } = await supabase
@@ -161,8 +170,11 @@ function calculateAnalytics(tracerData: any[], angketData: any[]) {
     .map(([year, count]) => ({ year: String(year), count }))
     .sort((a, b) => a.year.localeCompare(b.year))
 
-  // Gender distribution for tracer
-  const tracerGenderCounts = { 'Laki-Laki': 0, 'Perempuan': 0 }
+  // Gender distribution for tracer (older rows might not have this column/value)
+  const tracerGenderCounts: Record<'Laki-Laki' | 'Perempuan', number> = {
+    'Laki-Laki': 0,
+    'Perempuan': 0,
+  }
   for (const row of tracerData) {
     const gender = row?.jenis_kelamin
     if (gender === 'Laki-Laki') tracerGenderCounts['Laki-Laki']++
@@ -173,6 +185,7 @@ function calculateAnalytics(tracerData: any[], angketData: any[]) {
   const angketTotal = angketData.length
 
   // Angkatan distribution
+
   const angkatanCounts = new Map<string, number>()
   for (const row of angketData) {
     const angkatan = row?.angkatan
@@ -184,12 +197,16 @@ function calculateAnalytics(tracerData: any[], angketData: any[]) {
     .sort((a, b) => b.value - a.value)
 
   // Gender distribution for angket
-  const angketGenderCounts = { 'Laki-Laki': 0, 'Perempuan': 0 }
+  const angketGenderCounts: Record<'Laki-Laki' | 'Perempuan', number> = {
+    'Laki-Laki': 0,
+    'Perempuan': 0,
+  }
   for (const row of angketData) {
     const gender = row?.jenis_kelamin
     if (gender === 'Laki-Laki') angketGenderCounts['Laki-Laki']++
     else if (gender === 'Perempuan') angketGenderCounts['Perempuan']++
   }
+
 
   // Monthly submission trends (last 6 months)
   const monthlyCounts = new Map<string, number>()

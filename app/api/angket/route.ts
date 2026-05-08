@@ -129,21 +129,26 @@ export async function DELETE(request: Request) {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
+    console.log('Angket DELETE - ID:', id)
+
     if (!id) {
       return NextResponse.json({ error: 'ID wajib diisi' }, { status: 400 })
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('angket_kepuasan')
       .delete()
       .eq('id', id)
+      .select()
+
+    console.log('Angket DELETE - Result:', { data, error })
 
     if (error) {
       console.error('Supabase delete error:', error)
-      return NextResponse.json({ error: 'Gagal menghapus data' }, { status: 500 })
+      return NextResponse.json({ error: 'Gagal menghapus data', details: error }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, deleted: data })
   } catch (err) {
     console.error('API error:', err)
     return NextResponse.json({ error: 'Terjadi kesalahan server' }, { status: 500 })

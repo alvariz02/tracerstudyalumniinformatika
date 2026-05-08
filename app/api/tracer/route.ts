@@ -7,8 +7,15 @@ export async function POST(req: NextRequest) {
 
     // Basic server-side validation
     const required = [
-      'nim_npm', 'nama', 'tahun_lulus', 'no_telpon', 'email',
-      'status_saat_ini', 'waktu_mulai_mencari', 'aktif_mencari_kerja',
+      'nim_npm',
+      'nama',
+      'tahun_lulus',
+      'no_telpon',
+      'email',
+      'status_saat_ini',
+      'jenis_kelamin',
+      'waktu_mulai_mencari',
+      'aktif_mencari_kerja',
     ]
     for (const field of required) {
       if (!body[field]) {
@@ -18,9 +25,15 @@ export async function POST(req: NextRequest) {
 
     console.log('Tracer POST - Inserting:', body.nama, body.nim_npm)
 
+    // Ensure mapping matches DB schema
     const { data, error } = await supabase
       .from('tracer_study')
-      .insert([body])
+      .insert([
+        {
+          ...body,
+          jenis_kelamin: body.jenis_kelamin,
+        }
+      ])
       .select('id')
       .single()
 
@@ -56,21 +69,26 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
 
+    console.log('Tracer DELETE - ID:', id)
+
     if (!id) {
       return NextResponse.json({ error: 'ID wajib diisi' }, { status: 400 })
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('tracer_study')
       .delete()
       .eq('id', id)
+      .select()
+
+    console.log('Tracer DELETE - Result:', { data, error })
 
     if (error) {
       console.error('Supabase delete error:', error)
-      return NextResponse.json({ error: 'Gagal menghapus data' }, { status: 500 })
+      return NextResponse.json({ error: 'Gagal menghapus data', details: error }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, deleted: data })
   } catch (err) {
     console.error('Server error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
