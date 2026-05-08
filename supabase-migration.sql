@@ -71,10 +71,10 @@ create policy "Allow public insert"
   on public.tracer_study for insert
   with check (true);
 
--- Only authenticated users (admins) can read all data
-create policy "Allow authenticated read"
+-- Allow all users to read all data (for dashboard)
+create policy "Allow public read"
   on public.tracer_study for select
-  using (auth.role() = 'authenticated');
+  using (true);
 
 -- Allow service role to delete (for admin dashboard)
 create policy "Allow service role delete"
@@ -144,10 +144,10 @@ create policy "Allow public insert angket"
   on public.angket_kepuasan for insert
   with check (true);
 
--- Only authenticated users (admins) can read all data
-create policy "Allow authenticated read angket"
+-- Allow all users to read all data (for dashboard)
+create policy "Allow public read angket"
   on public.angket_kepuasan for select
-  using (auth.role() = 'authenticated');
+  using (true);
 
 -- Allow service role to delete (for admin dashboard)
 create policy "Allow service role delete angket"

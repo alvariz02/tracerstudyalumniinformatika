@@ -16,6 +16,14 @@ type DashboardAnalytics = {
 
 export async function GET() {
   try {
+    // Test connection first
+    console.log('Testing Supabase connection...')
+    const { count, error: testError } = await supabase
+      .from('tracer_study')
+      .select('*', { count: 'exact', head: true })
+    
+    console.log('Connection test:', { count, error: testError })
+
     // Helpful logs (do NOT print secrets)
     const supabaseKeyIsServiceRole = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY) // best-effort
     const anonKeyIsSet = Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
@@ -28,13 +36,27 @@ export async function GET() {
       )
     }
 
-
     // Fetch tracer study data (deterministic ordering)
+    console.log('Executing SELECT * query...')
+    
+    // Test simple query first
+    const { data: simpleData, error: simpleError } = await supabase
+      .from('tracer_study')
+      .select('id, nama, nim_npm')
+      .limit(3)
+    
+    console.log('Simple query result:', { dataLength: simpleData?.length, error: simpleError, data: simpleData })
+    
+    // Full query - use simple query without ordering first
     const { data: tracerData, error: tracerError } = await supabase
       .from('tracer_study')
       .select('*')
-      .order('created_at', { ascending: false })
-      .order('id', { ascending: false })
+
+    console.log('Tracer query result:', { 
+      dataLength: tracerData?.length, 
+      error: tracerError,
+      dataSample: tracerData?.slice(0, 2)
+    })
 
     if (tracerError) {
       console.error('Tracer fetch error:', tracerError)
@@ -52,16 +74,68 @@ export async function GET() {
 
     if (angketError) {
       console.error('Angket fetch error:', angketError)
-      return NextResponse.json({ error: 'Gagal mengambil data angket' }, { status: 500 })
+      return NextResponse.json(
+        {
+          error: 'Gagal mengambil data angket',
+          details: { message: angketError.message, hint: (angketError as any).hint },
+        },
+        { status: 500 }
+      )
+    }
+
+    const tracerCount = tracerData?.length || 0
+    const angketCount = angketData?.length || 0
+
+    // If empty, run lightweight permission checks to distinguish "no rows" vs "blocked by RLS"
+    let debug: any = undefined
+    if (tracerCount === 0 || angketCount === 0) {
+      const tracerPerm = await supabase
+        .from('tracer_study')
+        .select('id')
+        .limit(1)
+
+      const angketPerm = await supabase
+        .from('angket_kepuasan')
+        .select('id')
+        .limit(1)
+
+      debug = {
+        supabase: {
+          urlSet: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+          anonKeySet: anonKeyIsSet,
+        },
+        permissionChecks: {
+          tracer_study: {
+            ok: !tracerPerm.error,
+            rowFound: tracerPerm.data?.length ? true : false,
+            error: tracerPerm.error
+              ? {
+                  message: tracerPerm.error.message,
+                  code: (tracerPerm.error as any).code,
+                  details: (tracerPerm.error as any).details,
+                }
+              : null,
+          },
+          angket_kepuasan: {
+            ok: !angketPerm.error,
+            rowFound: angketPerm.data?.length ? true : false,
+            error: angketPerm.error
+              ? {
+                  message: angketPerm.error.message,
+                  code: (angketPerm.error as any).code,
+                  details: (angketPerm.error as any).details,
+                }
+              : null,
+          },
+        },
+      }
     }
 
     // Calculate statistics for angket kepuasan
     const angketStats = calculateAngketStats(angketData || [])
 
-    console.log('Dashboard API - Tracer count:', tracerData?.length)
-    console.log('Dashboard API - Angket count:', angketData?.length)
-    console.log('Dashboard API - First tracer:', tracerData?.[0]?.nama)
-    console.log('Dashboard API - Second tracer:', tracerData?.[1]?.nama)
+    console.log('Dashboard API - Tracer count:', tracerCount)
+    console.log('Dashboard API - Angket count:', angketCount)
 
     // Previously missing: calculateAnalytics
     const analytics = calculateAnalytics(tracerData || [], angketData || [])
@@ -70,17 +144,19 @@ export async function GET() {
       tracer: tracerData || [],
       angket: angketData || [],
       stats: {
-        tracerCount: tracerData?.length || 0,
-        angketCount: angketData?.length || 0,
+        tracerCount,
+        angketCount,
         angketStats,
         analytics,
       },
+      ...(debug ? { debug } : {}),
     })
   } catch (err) {
     console.error('Dashboard API error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
+
 
 function calculateAngketStats(data: any[]) {
   if (data.length === 0) return null
