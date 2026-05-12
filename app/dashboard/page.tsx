@@ -25,16 +25,98 @@ interface TracerData {
   nim_npm: string
   nama: string
   tahun_lulus: number
+  no_telpon: string
   email: string
+  npwp?: string
   status_saat_ini: string
-  jenis_kelamin?: string
+  sumber_dana: string[]
+  komp_lulus_etika: number
+  komp_lulus_keahlian_ilmu: number
+  komp_lulus_bahasa_inggris: number
+  komp_lulus_teknologi_informasi: number
+  komp_lulus_komunikasi: number
+  komp_lulus_kerja_sama_tim: number
+  komp_lulus_pengembangan: number
+  komp_kerja_etika: number
+  komp_kerja_keahlian_ilmu: number
+  komp_kerja_bahasa_inggris: number
+  komp_kerja_teknologi_informasi: number
+  komp_kerja_komunikasi: number
+  komp_kerja_kerja_sama_tim: number
+  komp_kerja_pengembangan: number
+  metode_perkuliahan: number
+  metode_demonstrasi: number
+  metode_proyek_riset: number
+  metode_magang: number
+  metode_praktikum: number
+  metode_kerja_lapangan: number
+  metode_diskusi: number
+  sarana_kelas: number
+  sarana_lab_komputer: number
+  sarana_lab_bahasa: number
+  sarana_perpustakaan: number
+  sarana_hotspot_area: number
+  sarana_ruangan_diskusi: number
+  sarana_buku_referensi: number
+  sarana_fasilitas_kamar_kecil: number
+  sarana_fasilitas_ibadah: number
+  perlakuan_staf_santun: number
+  perlakuan_dosen_pa: number
+  perlakuan_dosen_konseling: number
+  perlakuan_sanksi_adil: number
+  kehandalan_materi_jelas: number
+  kehandalan_bahan_ajar: number
+  kehandalan_waktu_diskusi: number
+  kehandalan_penilaian_objektif: number
+  kehandalan_dosen_tepat_waktu: number
+  kehandalan_jumlah_dosen: number
+  kehandalan_kemampuan_staf: number
+  kehandalan_kualitas_layanan_staf: number
+  pemahaman_kepentingan_mahasiswa: number
+  pemahaman_biaya_dibicarakan: number
+  pemahaman_monitoring_pa: number
+  pemahaman_minat_bakat: number
+  tanggap_dosen_konseling: number
+  tanggap_bantuan_tidak_mampu: number
+  tanggap_bantu_masalah_akademik: number
+  tanggap_waktu_konsultasi_ortu: number
+  masukan_layanan_akademik?: string
 }
 
 interface KepuasanData {
   id: string
   created_at: string
-  nama_penilai: string
   nama_instansi_perusahaan: string
+  nama_penilai: string
+  jabatan: string
+  alamat_instansi: string
+  nomor_telepon_email: string
+  nama_lulusan_yang_dinilai: string
+  tahun_lulus: number
+  jabatan_lulusan_saat_ini: string
+  lama_bekerja: string
+  integritas?: number
+  keahlian_bidang_ilmu?: number
+  kemampuan_teknologi_informasi?: number
+  kemampuan_berkomunikasi?: number
+  kemampuan_kerja_sama_tim?: number
+  kemampuan_berpikir_kritis?: number
+  kreativitas_inovasi?: number
+  kemampuan_adaptasi_lingkungan?: number
+  tanggung_jawab_pekerjaan?: number
+  kepemimpinan?: number
+  kemampuan_manajemen_waktu?: number
+  kemampuan_bahasa_inggris?: number
+  motivasi_etos_kerja?: number
+  kemampuan_analisis_keputusan?: number
+  kinerja_keseluruhan?: number
+  kompetensi_sesuai_kebutuhan?: number
+  kemampuan_bekerja_profesional?: number
+  kemampuan_adaptasi_budaya_kerja?: number
+  instansi_puas_kinerja?: number
+  kompetensi_dibutuhkan_dilingkungan?: string
+  kompetensi_perlu_ditingkatkan?: string
+  saran_pengembangan_kurikulum?: string
 }
 
 interface Analytics {
@@ -403,7 +485,7 @@ export default function Dashboard() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    {['No', 'NIM/NPM', 'Nama', 'Tahun Lulus', 'Email', 'Status', 'Tanggal', 'Aksi'].map(h => (
+                    {['No', 'NIM/NPM', 'Nama', 'Tahun Lulus', 'No Telepon', 'Email', 'Status', 'Sumber Dana', 'Tanggal', 'Aksi'].map(h => (
                       <th key={h} className="text-left px-4 py-3 font-medium text-slate-600 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -411,7 +493,7 @@ export default function Dashboard() {
                 <tbody>
                   {tracerData.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-4 py-10 text-center text-slate-400 text-sm">
+                      <td colSpan={10} className="px-4 py-10 text-center text-slate-400 text-sm">
                         Belum ada data tracer study
                       </td>
                     </tr>
@@ -422,11 +504,21 @@ export default function Dashboard() {
                         <td className="px-4 py-3 text-slate-800 font-medium">{row.nim_npm}</td>
                         <td className="px-4 py-3 text-slate-800">{row.nama}</td>
                         <td className="px-4 py-3 text-slate-600">{row.tahun_lulus}</td>
+                        <td className="px-4 py-3 text-slate-600">{row.no_telpon}</td>
                         <td className="px-4 py-3 text-slate-600">{row.email}</td>
                         <td className="px-4 py-3">
                           <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
                             {row.status_saat_ini}
                           </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap gap-1">
+                            {row.sumber_dana.map((sumber, idx) => (
+                              <span key={idx} className="px-1.5 py-0.5 bg-green-50 text-green-700 rounded text-xs">
+                                {sumber}
+                              </span>
+                            ))}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-slate-400 whitespace-nowrap">{formatDate(row.created_at)}</td>
                         <td className="px-4 py-3">
@@ -460,7 +552,7 @@ export default function Dashboard() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    {['No', 'Nama', 'instansi/perusahaan', 'Tanggal', 'Aksi'].map(h => (
+                    {['No', 'Nama Penilai', 'Instansi/Perusahaan', 'Jabatan', 'Nama Lulusan', 'Tahun Lulus', 'Jabatan Lulusan', 'Lama Bekerja', 'Tanggal', 'Aksi'].map(h => (
                       <th key={h} className="text-left px-4 py-3 font-medium text-slate-600 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -468,7 +560,7 @@ export default function Dashboard() {
                 <tbody> 
                   {kepuasanData.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-10 text-center text-slate-400 text-sm">
+                      <td colSpan={10} className="px-4 py-10 text-center text-slate-400 text-sm">
                         Belum ada data kepuasan pengguna lulusan
                       </td>
                     </tr>
@@ -478,6 +570,11 @@ export default function Dashboard() {
                         <td className="px-4 py-3 text-slate-400">{index + 1}</td>
                         <td className="px-4 py-3 text-slate-800 font-medium">{row.nama_penilai}</td>
                         <td className="px-4 py-3 text-slate-600">{row.nama_instansi_perusahaan}</td>
+                        <td className="px-4 py-3 text-slate-600">{row.jabatan}</td>
+                        <td className="px-4 py-3 text-slate-800">{row.nama_lulusan_yang_dinilai}</td>
+                        <td className="px-4 py-3 text-slate-600">{row.tahun_lulus}</td>
+                        <td className="px-4 py-3 text-slate-600">{row.jabatan_lulusan_saat_ini}</td>
+                        <td className="px-4 py-3 text-slate-600">{row.lama_bekerja}</td>
                         <td className="px-4 py-3 text-slate-400 whitespace-nowrap">{formatDate(row.created_at)}</td>
                         <td className="px-4 py-3">
                           <button

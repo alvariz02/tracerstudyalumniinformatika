@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     // Fetch tracer study data
     const { data: tracerData, error: tracerError } = await supabase
